@@ -26,6 +26,7 @@ public class SuscripcionService implements ISuscripcionService {
 
     public SuscripcionService(){}
 
+    @SuppressWarnings("null")
     @Override
     public Suscripcion createSuscripcion(Suscripcion suscripcion) {
         logger.info("Consume service createSuscripcion");
@@ -57,6 +58,29 @@ public class SuscripcionService implements ISuscripcionService {
             Suscripcion result = restTemplate.postForObject(resourceUrl + "suscription/", data, Suscripcion.class);
             return result;
         }
+    }
+
+    @Override
+    public Suscripcion cancelSuscripcion(Suscripcion suscripcion) {
+        logger.info("Consume service cancelSuscripcion");
+        Suscripcion consult;
+        try {
+            logger.info("Consult to exist suscription");
+            consult = restTemplate.getForObject(resourceUrl + "suscription/" + suscripcion.idproveedor(), Suscripcion.class);
+        } catch (HttpClientErrorException z) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Not exist suscription whith asociate idproveedor", z);
+        }
+        try {
+            logger.info("Cancel suscription");
+            restTemplate.delete(resourceUrl + "suscription/" + suscripcion.idproveedor());
+            logger.info("Cancel suscription complete");
+        } catch (HttpClientErrorException z) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "The subscription could not be canceled", z);
+        }
+        consult = restTemplate.getForObject(resourceUrl + "suscription/" + suscripcion.idproveedor(), Suscripcion.class);
+        return consult;
     }
 
     

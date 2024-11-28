@@ -10,6 +10,7 @@ import com.orquestador.pruebas.services.ISuscripcionService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -29,6 +30,13 @@ public class SuscripcionController {
     @ResponseBody
     public Suscripcion activeSuscription(@RequestBody Suscripcion suscripcion) {
         return isuscripcionService.createSuscripcion(suscripcion);
+    }
+
+    @DeleteMapping("/")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public Suscripcion cancelSuscription(@RequestBody Suscripcion suscripcion) {
+        return isuscripcionService.cancelSuscripcion(suscripcion);
     }
 
 }

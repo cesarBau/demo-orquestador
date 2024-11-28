@@ -5,5 +5,6 @@ import com.orquestador.pruebas.models.Suscripcion;
 public interface ISuscripcionService {
 
     Suscripcion createSuscripcion (Suscripcion suscripcion);
+    Suscripcion cancelSuscripcion (Suscripcion suscripcion);
 
 }
