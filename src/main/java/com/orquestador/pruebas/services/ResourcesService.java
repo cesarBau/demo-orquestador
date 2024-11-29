@@ -51,7 +51,6 @@ public class ResourcesService implements IResourcesServices{
     @Override
     public Resources create(User user) {
         logger.info("Consume service create");
-        logger.info("Create new User");
         User createUser =  iuserService.createUser(user.idusuario(), user);
         Suscripcion data = new Suscripcion(null, createUser.idproveedor(), null, null, null, null, null);
         logger.info("Create new Suscription");
