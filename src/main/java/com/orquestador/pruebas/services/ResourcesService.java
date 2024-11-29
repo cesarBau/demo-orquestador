@@ -3,6 +3,8 @@ package com.orquestador.pruebas.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -14,10 +16,13 @@ import com.orquestador.pruebas.models.Suscripcion;
 import com.orquestador.pruebas.models.User;
 
 @Service
+@PropertySource("classpath:other.properties")
 public class ResourcesService implements IResourcesServices{
 
-    private static Logger logger = LoggerFactory.getLogger(ResourcesService.class);
-    private static String resourceUrl = "http://localhost:5000/";
+    @Value("${url.microuser}")
+    private String resourceUrl;
+
+    private Logger logger = LoggerFactory.getLogger(ResourcesService.class);
     private RestTemplate restTemplate = new RestTemplate();
 
     @Autowired
@@ -63,14 +68,14 @@ public class ResourcesService implements IResourcesServices{
         Suscripcion consultSuscription;
         try {
             logger.info("Consutl User");
-            consultUser = restTemplate.getForObject(resourceUrl + "user/" + idusuario, User.class);
+            consultUser = restTemplate.getForObject(resourceUrl + "/user/" + idusuario, User.class);
         } catch (HttpClientErrorException e) {
             throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "User not found", e);
         }
         try {
             logger.info("Consutl Suscripcion");
-            consultSuscription = restTemplate.getForObject(resourceUrl + "suscription/" + consultUser.idproveedor(), Suscripcion.class);
+            consultSuscription = restTemplate.getForObject(resourceUrl + "/suscription/" + consultUser.idproveedor(), Suscripcion.class);
         } catch (HttpClientErrorException x) {
             throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Suscription not found", x);

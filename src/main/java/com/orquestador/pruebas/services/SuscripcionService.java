@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -18,10 +20,13 @@ import com.orquestador.pruebas.models.Suscripcion;
 import com.orquestador.pruebas.models.User;
 
 @Service
+@PropertySource("classpath:other.properties")
 public class SuscripcionService implements ISuscripcionService {
 
-    private static Logger logger = LoggerFactory.getLogger(SuscripcionService.class);
-    private static String resourceUrl = "http://localhost:5000/";
+    @Value("${url.microuser}")
+    private String resourceUrl;
+
+    private Logger logger = LoggerFactory.getLogger(SuscripcionService.class);
     private RestTemplate restTemplate = new RestTemplate();
 
     public SuscripcionService(){}
@@ -32,7 +37,7 @@ public class SuscripcionService implements ISuscripcionService {
         logger.info("Consume service createSuscripcion");
         try {
             logger.info("Consult to exist suscripcion");
-            Suscripcion consult = restTemplate.getForObject(resourceUrl + "suscription/" + suscripcion.idproveedor(), Suscripcion.class);
+            Suscripcion consult = restTemplate.getForObject(resourceUrl + "/suscription/" + suscripcion.idproveedor(), Suscripcion.class);
             logger.info(consult.toString());
             if (consult.estatusSuscripcion().id() == 1) {
                 logger.info("Exist suscripcion and your status is active");
@@ -40,7 +45,7 @@ public class SuscripcionService implements ISuscripcionService {
             } else {
                 logger.info("Exist suscripcion and your status is not active");
                 HttpEntity<Suscripcion> request =  new HttpEntity<>(new Suscripcion(null, null, null, null, null, new EstatusSuscripcion(null, null), null));
-                ResponseEntity<Suscripcion> result = restTemplate.exchange(resourceUrl + "suscription/" + consult.idproveedor(), HttpMethod.PUT, request, Suscripcion.class);
+                ResponseEntity<Suscripcion> result = restTemplate.exchange(resourceUrl + "/suscription/" + consult.idproveedor(), HttpMethod.PUT, request, Suscripcion.class);
                 logger.info("Update suscripcion, is now active");
                 return result.getBody();
             }
@@ -48,14 +53,14 @@ public class SuscripcionService implements ISuscripcionService {
             logger.info("Create on suscripcion");
             try {
                 logger.info("Consult to exist user for idproveedor");
-                restTemplate.getForObject(resourceUrl + "user/idproveedor/" + suscripcion.idproveedor(), User.class);
+                restTemplate.getForObject(resourceUrl + "/user/idproveedor/" + suscripcion.idproveedor(), User.class);
             } catch (HttpClientErrorException z) {
                 throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Not exist user whith asociate idproveedor", z);
             }
             LocalDateTime now = LocalDateTime.now();
             Suscripcion data = new Suscripcion(null, suscripcion.idproveedor(), now, now, null, new EstatusSuscripcion(1, "activo"), now);
-            Suscripcion result = restTemplate.postForObject(resourceUrl + "suscription/", data, Suscripcion.class);
+            Suscripcion result = restTemplate.postForObject(resourceUrl + "/suscription/", data, Suscripcion.class);
             return result;
         }
     }
@@ -66,22 +71,21 @@ public class SuscripcionService implements ISuscripcionService {
         Suscripcion consult;
         try {
             logger.info("Consult to exist suscription");
-            consult = restTemplate.getForObject(resourceUrl + "suscription/" + suscripcion.idproveedor(), Suscripcion.class);
+            consult = restTemplate.getForObject(resourceUrl + "/suscription/" + suscripcion.idproveedor(), Suscripcion.class);
         } catch (HttpClientErrorException z) {
             throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Not exist suscription whith asociate idproveedor", z);
         }
         try {
             logger.info("Cancel suscription");
-            restTemplate.delete(resourceUrl + "suscription/" + suscripcion.idproveedor());
+            restTemplate.delete(resourceUrl + "/suscription/" + suscripcion.idproveedor());
             logger.info("Cancel suscription complete");
         } catch (HttpClientErrorException z) {
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST, "The subscription could not be canceled", z);
         }
-        consult = restTemplate.getForObject(resourceUrl + "suscription/" + suscripcion.idproveedor(), Suscripcion.class);
+        consult = restTemplate.getForObject(resourceUrl + "/suscription/" + suscripcion.idproveedor(), Suscripcion.class);
         return consult;
     }
 
-    
 }
