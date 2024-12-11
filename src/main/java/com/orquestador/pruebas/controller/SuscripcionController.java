@@ -10,12 +10,14 @@ import com.orquestador.pruebas.services.ISuscripcionService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/suscription")
+@PreAuthorize("denyAll()")
 public class SuscripcionController {
 
     @Autowired
@@ -28,6 +30,7 @@ public class SuscripcionController {
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
+    @PreAuthorize("hasAuthority('CREATE')")
     public Suscripcion activeSuscription(@RequestBody Suscripcion suscripcion) {
         return isuscripcionService.createSuscripcion(suscripcion);
     }
@@ -35,6 +38,7 @@ public class SuscripcionController {
     @DeleteMapping("/")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('CREATE')")
     public Suscripcion cancelSuscription(@RequestBody Suscripcion suscripcion) {
         return isuscripcionService.cancelSuscripcion(suscripcion);
     }
