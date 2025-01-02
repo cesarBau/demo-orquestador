@@ -46,4 +46,19 @@ public class PersonaService implements IPersonaService {
         return response;
     }
 
+    @Override
+    public PersonaResponse getPersonaById(Integer id) {
+        logger.info("Consume service getPersonaById");
+        logger.info("Get to name for persona");
+        NameResponse name = iNameService.getNameById(id);
+        logger.info("Get to lastname for persona");
+        List<LastNameResponse> lastsNames = iLastNameService.getLastNameByName(id);
+        logger.info("Create to persona");
+        PersonaResponse response = new PersonaResponse(name.getUsuarioId(), name.getNombre(),
+                name.getSegundoNombre(), name.getId(),
+                lastsNames);
+        logger.info(response.toString());
+        return response;
+    }
+
 }

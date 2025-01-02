@@ -38,4 +38,18 @@ public class NameService implements INameService {
         }
     }
 
+    @SuppressWarnings("null")
+    @Override
+    public NameResponse getNameById(Integer id) {
+        logger.info("Consume service getNameById");
+        try {
+            NameResponse consult = restTemplate.getForObject(resourceUrl + "/name/" + id, NameResponse.class);
+            logger.info(consult.toString());
+            return consult;
+        } catch (HttpClientErrorException z) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, "Not get Name for error in conection", z);
+        }
+    }
+
 }

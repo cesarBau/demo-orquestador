@@ -6,5 +6,6 @@ import com.orquestador.pruebas.models.dto.PersonaResponse;
 public interface IPersonaService {
 
     PersonaResponse createPersona(Persona entity);
+    PersonaResponse getPersonaById(Integer id);
 
 }

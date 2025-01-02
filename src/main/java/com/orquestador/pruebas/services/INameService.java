@@ -6,5 +6,6 @@ import com.orquestador.pruebas.models.dto.NameResponse;
 public interface INameService {
 
     NameResponse createName(Name entity);
+    NameResponse getNameById(Integer id);
 
 }

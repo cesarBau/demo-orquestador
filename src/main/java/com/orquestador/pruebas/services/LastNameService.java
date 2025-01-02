@@ -1,5 +1,7 @@
 package com.orquestador.pruebas.services;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +35,22 @@ public class LastNameService implements ILastNameService {
         } catch (HttpClientErrorException z) {
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, "Not create LastName for error in conection", z);
+        }
+    }
+
+    @SuppressWarnings({ "null", "unchecked" })
+    @Override
+    public List<LastNameResponse> getLastNameByName(Integer nameId) {
+        logger.info("Consume service getLastNameByName");
+        try {
+            List<LastNameResponse> consult = restTemplate.getForObject(resourceUrl + "/lastname/name/" + nameId,
+                    List.class);
+            Integer size = consult.size();
+            logger.info(Integer.toString(size));
+            return consult;
+        } catch (HttpClientErrorException z) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, "Not get LastName for error in conection", z);
         }
     }
 
